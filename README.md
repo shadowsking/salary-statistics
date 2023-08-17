@@ -34,3 +34,4 @@ or
 ```bash
 python main.py
 ```
+![image](https://github.com/shadowsking/salary-statistics/assets/21194893/b8690a28-1460-4c10-9fa0-3ede9a1f82b5)
