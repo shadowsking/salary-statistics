@@ -5,10 +5,7 @@ import requests
 from salary_helpers import predict_salary
 
 
-def fetch_areas_ids(location: str = None) -> list:
-    if not location:
-        return []
-
+def fetch_areas_ids(location: str) -> list:
     response = requests.get(
         "https://api.hh.ru/suggests/areas", params={"text": location}
     )
@@ -23,18 +20,15 @@ def fetch_areas_ids(location: str = None) -> list:
 
 def fetch_vacancies(text: str, area: list, page: int = None) -> dict:
     payload = {
-        "professional_role": 96,
         "text": text,
         "area": area,
         "page": page,
         "per_page": 100,
-        "only_with_salary": True,
     }
 
     attempt = 0
     max_attempts = 5
     attempt_interval = 15
-
     while attempt < max_attempts:
         try:
             response = requests.get("https://api.hh.ru/vacancies", params=payload)
@@ -48,17 +42,15 @@ def fetch_vacancies(text: str, area: list, page: int = None) -> dict:
             time.sleep(attempt_interval)
 
 
-def get_vacancies_from_hh(text: str, location: str = None) -> dict:
-    area_ids = fetch_areas_ids(location)
+def get_vacancies_from_hh(text: str, area_ids: list) -> dict:
     page = 0
     vacancies = {}
     while True:
-        response_object = fetch_vacancies(text, area_ids, page)
-        vacancies.setdefault("found", response_object["found"])
-        items = vacancies.setdefault("items", [])
-        items.extend(response_object.get("items"))
+        response_vacancies = fetch_vacancies(text, area_ids, page)
+        vacancies.setdefault("found", response_vacancies["found"])
+        vacancies.setdefault("items", []).extend(response_vacancies.get("items"))
         page += 1
-        if page >= response_object.get("pages"):
+        if page >= response_vacancies.get("pages"):
             break
 
     return vacancies

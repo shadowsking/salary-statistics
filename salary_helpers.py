@@ -20,7 +20,7 @@ def predict_salary(salary_from: int = None, salary_to: int = None) -> int | None
 
 
 def create_table(salaries: dict, title: str):
-    table_data = [
+    table_statistics = [
         [
             "Язык программирования",
             "Вакансий найдено",
@@ -34,7 +34,7 @@ def create_table(salaries: dict, title: str):
 
         ordered_columns = ["vacancies_found", "vacancies_processed", "average_salary"]
         row = [language, *map(salary_statistics.get, ordered_columns)]
-        table_data.append(row)
+        table_statistics.append(row)
 
-    table_instance = AsciiTable(table_data, title)
+    table_instance = AsciiTable(table_statistics, title)
     return table_instance.table
