@@ -11,11 +11,7 @@ def fetch_areas_ids(location: str) -> list:
     )
     response.raise_for_status()
 
-    areas_ids = []
-    for area in response.json().get("items"):
-        areas_ids.append(area.get("id"))
-
-    return areas_ids
+    return [area.get("id") for area in response.json().get("items")]
 
 
 def fetch_vacancies(text: str, area: list, page: int = None) -> dict:

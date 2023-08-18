@@ -11,11 +11,7 @@ def fetch_town_ids(api_key: str, location: str = None):
     )
     response.raise_for_status()
 
-    town_ids = []
-    for area in response.json().get("objects"):
-        town_ids.append(area.get("id"))
-
-    return town_ids
+    return [area.get("id") for area in response.json().get("objects")]
 
 
 def fetch_vacancies(
