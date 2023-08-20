@@ -56,16 +56,18 @@ def main():
         "-l",
         "--location",
         type=str,
-        help="Search area. (default: Moscow)",
-        default="Moscow",
+        help="Search area. (default: Москва)",
+        default="Москва",
     )
     args = parser.parse_args()
     dotenv.load_dotenv()
     salary_statistics = {}
+    area_ids = fetch_areas_ids(args.location)
+    town_ids = fetch_town_ids(os.getenv("SJ_API_KEY"), args.location)
     for language in tqdm(PROGRAMMING_LANGUAGES):
-        area_ids = fetch_areas_ids(args.location)
+        vacancy_name = "Программист {}".format(language)
         vacancies = get_vacancies_from_hh(
-            text=language,
+            text=vacancy_name,
             area_ids=area_ids,
         )
         head_hunter = salary_statistics.setdefault("Head Hunter", {})
@@ -73,9 +75,8 @@ def main():
             get_vacancies_statistics(vacancies, predict_rub_salary_hh) or {}
         )
 
-        town_ids = fetch_town_ids(os.getenv("SJ_API_KEY"), args.location)
         vacancies = get_vacancies_from_sj(
-            os.getenv("SJ_API_KEY"), text=language, town_ids=town_ids
+            os.getenv("SJ_API_KEY"), text=vacancy_name, town_ids=town_ids
         )
         super_job = salary_statistics.setdefault("Super Job", {})
         super_job[language] = (
